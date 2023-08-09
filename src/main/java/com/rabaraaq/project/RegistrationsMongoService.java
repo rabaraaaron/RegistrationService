@@ -1,7 +1,11 @@
 package com.rabaraaq.project;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +32,15 @@ public class RegistrationsMongoService {
 	}
 	
 	public void createRegistration(Registration reg) {
+		String date;
+		if(reg.registration_date.contains("T")) {
+			reg.setRegistration_date(reg.registration_date);
+		} else {
+			Long timestamp = Long.parseLong(reg.registration_date);
+			DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+			format.setTimeZone(TimeZone.getDefault());
+			reg.setRegistration_date(format.format(new Date(timestamp)));
+		}
 		mongoRepository.insert(reg);
 	}
 	
